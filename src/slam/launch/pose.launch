@@ -1,0 +1,4 @@
+<launch>
+    <node name="imu_filter" pkg="imu_filter_madgwick" type="imu_filter_node" output="screen"/>
+    <node name="pose_node" pkg="slam" type="pose_pub.py" output="screen"/>
+</launch>
