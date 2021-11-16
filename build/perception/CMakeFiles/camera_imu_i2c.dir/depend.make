@@ -68,6 +68,11 @@ perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melo
 perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/sensor_msgs/Imu.h
 perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/sensor_msgs/MagneticField.h
 perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/std_msgs/Header.h
+perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/tf2/LinearMath/MinMax.h
+perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/tf2/LinearMath/QuadWord.h
+perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/tf2/LinearMath/Quaternion.h
+perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/tf2/LinearMath/Scalar.h
+perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/tf2/LinearMath/Vector3.h
 perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h
 perception/CMakeFiles/camera_imu_i2c.dir/src/camera_imu_i2c.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h
 

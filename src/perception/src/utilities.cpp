@@ -1,6 +1,8 @@
 #include "utilities.h"
+#include <sstream>
 
 vector<float> euler_to_quaternion(float roll, float pitch, float yaw) {
+    printf("\r\n Angle：Roll: %.2f     Pitch: %.2f     Yaw: %.2f \r\n",roll, pitch, yaw);
     float qx = sin(roll/2.0) * cos(pitch/2.0) * cos(yaw/2.0) - cos(roll/2.0) * sin(pitch/2.0) * sin(yaw/2.0);
     float qy = cos(roll/2.0) * sin(pitch/2.0) * cos(yaw/2.0) + sin(roll/2.0) * cos(pitch/2.0) * sin(yaw/2.0);
     float qz = cos(roll/2.0) * cos(pitch/2.0) * sin(yaw/2.0) - sin(roll/2.0) * sin(pitch/2.0) * cos(yaw/2.0);

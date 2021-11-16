@@ -111,7 +111,7 @@ def get_subimages(image: PIL.Image.Image) -> list:
         # To obtain a slightly larger bounding box, we need to:
         x0, y0 = math.floor(x0), math.floor(y0)
         x1, y1 = math.ceil(x1), math.ceil(y1)
-        subimages.append(image.crop((x0, y0, x1, y1)))
+        subimages.append([image.crop((x0, y0, x1, y1)), x0, y0, x1, y1])
     #     draw.rectangle([(x0, y0), (x1, y1)], outline="red")  # very nice result!
     # image.show()
     return subimages
@@ -125,10 +125,20 @@ def callback(frame):
     cones = get_subimages(pil_image)
     cone_pub.publish(str(cones))
 
+    print()
     if len(cones) > 0:
         # Step 2: Go through RektNet.
-        print("{} cones detected.".format(len(cones)))
-        keypoints = get_keypoints(keypoint_model, cones)
+        # print("{} cones detected.".format(len(cones)))
+        # px_per_mm = 1280/(3296/443)
+        # print("Pixel per mm", px_per_mm)
+        for id, cone in enumerate(cones):
+            x0, y0, x1, y1 = cone[1:]
+            h_pixel = y1- y0
+            # estimated_distance = (325 * 2.6) / (h_pixel/px_per_mm)
+            estimated_distance = round(((2.6 * 325 * frame.height)/(h_pixel * 2.76)) / 1000, 4)
+            
+            print("{} is roughly {}m away. Pixel height: {}".format(id, estimated_distance, h_pixel))
+        # keypoints = get_keypoints(keypoint_model, cones)
 
         # # ad-hoc visualizer :)
         # for idx, cone in enumerate(cones[0:5]):
@@ -145,6 +155,7 @@ if __name__ == '__main__':
     # initialize cuda device
     cuda = torch.cuda.is_available()
     device = torch.device('cuda:0' if cuda else 'cpu')
+    print("\n Device: ", device)
     random.seed(0)
     torch.manual_seed(0)
     if cuda:
@@ -167,6 +178,6 @@ if __name__ == '__main__':
     keypoint_model.load_state_dict(torch.load(REKTNET_WEIGHT_PATH).get('model'))
 
     rospy.init_node('pipeline_listener', anonymous=True)
-    rospy.Subscriber("/vid", Image, callback)
+    rospy.Subscriber("/stereo/left/image_raw", Image, callback)
     rospy.spin()
     cv2.destroyAllWindows()

@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD='/home/uwfsae/driverless_ws/build'
+export PYTHONPATH="/home/uwfsae/driverless_ws/devel/lib/python2.7/dist-packages:$PYTHONPATH"

@@ -4,8 +4,10 @@
 #include "ros/ros.h"
 #include "sensor_msgs/Imu.h"
 #include "sensor_msgs/MagneticField.h"
+#include <tf2/LinearMath/Quaternion.h>
 #include "utilities.h"
 #include <sstream>
+#define PI 3.14159265359
 
 // TODO: 
 //		- Publish magnetometer readings as well
@@ -51,37 +53,39 @@ int main(int argc, char* argv[])
 	while(ros::ok())
 	{
 		imuDataGet(&stAngles, &stGyroRawData, &stAccelRawData, &stMagnRawData);
-		//print_imu_logs(stAngles, stGyroRawData, stAccelRawData, stMagnRawData)
-
-		vector<float> orientation = euler_to_quaternion(stAngles.fRoll, stAngles.fPitch, stAngles.fYaw);
+		// print_imu_logs(stAngles, stGyroRawData, stAccelRawData, stMagnRawData);
+		// tf2::Quaternion myQuaternion;
+		// myQuaternion.setRPY( stAngles.fRoll * PI/180, stAngles.fPitch * PI/180, stAngles.fYaw * PI/180);  // Create this quaternion from roll/pitch/yaw (in radians)
+		// myQuaternion.normalize();
+		// vector<float> orientation = euler_to_quaternion(stAngles.fRoll * PI/180 , stAngles.fPitch * PI/180, stAngles.fYaw * PI/180);
 
 		// Build IMU Msg
 		imu_msg.header.stamp = ros::Time::now();
-		imu_msg.header.frame_id = "camera_imu";
-		imu_msg.orientation.x = orientation[0];
-		imu_msg.orientation.y = orientation[1];
-		imu_msg.orientation.z = orientation[2];
-		imu_msg.orientation.w = orientation[3];
-		imu_msg.orientation_covariance[0] = -1;
+		imu_msg.header.frame_id = "left_camera";
+		// imu_msg.orientation.x = myQuaternion.x();
+		// imu_msg.orientation.y = myQuaternion.y();
+		// imu_msg.orientation.z = myQuaternion.z();
+		// imu_msg.orientation.w = myQuaternion.w();
+		// imu_msg.orientation_covariance[0] = -1;
 
-		imu_msg.linear_acceleration.x = stAccelRawData.fX;
-		imu_msg.linear_acceleration.y = stAccelRawData.fY;
-		imu_msg.linear_acceleration.z = stAccelRawData.fZ;
+		imu_msg.linear_acceleration.x = stAccelRawData.fZ * 9.81;
+		imu_msg.linear_acceleration.y = stAccelRawData.fX * 9.81;
+		imu_msg.linear_acceleration.z = stAccelRawData.fY * 9.81;
 		imu_msg.linear_acceleration_covariance[0] = -1;
 
-		imu_msg.angular_velocity.x = stGyroRawData.fX;
-		imu_msg.angular_velocity.y = stGyroRawData.fY;
-		imu_msg.angular_velocity.z = stGyroRawData.fZ;
+		imu_msg.angular_velocity.x = stGyroRawData.fZ * PI/180;
+		imu_msg.angular_velocity.y = stGyroRawData.fX * PI/180;
+		imu_msg.angular_velocity.z = stGyroRawData.fY * PI/180; 
 		imu_msg.angular_velocity_covariance[0] = -1;
 		
 
 		// Build Mag msg
 		mag_msg.header.stamp = ros::Time::now();
-		mag_msg.header.frame_id = "camera_imu";
+		mag_msg.header.frame_id = "left_camera";
 
-		mag_msg.magnetic_field.x = stMagnRawData.fX;
-		mag_msg.magnetic_field.y = stMagnRawData.fY;
-		mag_msg.magnetic_field.z = stMagnRawData.fZ;
+		mag_msg.magnetic_field.x = stMagnRawData.fZ /1000000.0;
+		mag_msg.magnetic_field.y = stMagnRawData.fX /1000000.0;
+		mag_msg.magnetic_field.z = stMagnRawData.fY /1000000.0;
 		mag_msg.magnetic_field_covariance[0] = -1;
 
 		camera_imu_pub.publish(imu_msg);

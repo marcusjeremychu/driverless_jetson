@@ -219,6 +219,7 @@ void imuAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, f
   q1 = q1 * norm;
   q2 = q2 * norm;
   q3 = q3 * norm;
+  // printf("q0:%.3f, q1:%.3f, q2:%.3f, q3:%.3f\n", q0, q1, q2, q3);
 }
 
 float invSqrt(float x) 

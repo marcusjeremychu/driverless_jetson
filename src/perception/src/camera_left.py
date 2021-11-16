@@ -2,15 +2,31 @@
 import rospy
 import cv2
 import os
-from sensor_msgs.msg import Image 
+from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
+import yaml
+
+def load_camera_yaml(filename):
+    fp = open(filename, "r")
+    camera_info_yaml = yaml.safe_load(fp)
+
+    cameraInfo = CameraInfo()
+    cameraInfo.height = camera_info_yaml['image_height']
+    cameraInfo.width = camera_info_yaml['image_width']
+    cameraInfo.distortion_model = camera_info_yaml['camera_model']
+    cameraInfo.K = camera_info_yaml['camera_matrix']['data']
+    cameraInfo.D = camera_info_yaml['distortion_coefficients']['data']
+    cameraInfo.R = camera_info_yaml['rectification_matrix']['data']
+    cameraInfo.P = camera_info_yaml['projection_matrix']['data']
+    return cameraInfo
+
 
 def gstreamer_pipeline_1(
-    capture_width=1640,
-    capture_height=1232,
-    display_width=1640,
-    display_height=1232,
-    framerate=29.999999,                                                            
+    capture_width=1280,
+    capture_height=720,
+    display_width=1280,
+    display_height=720,
+    framerate=59.999999,                                                            
     flip_method=2,
 ):
     return (
@@ -36,7 +52,9 @@ def gstreamer_pipeline_1(
 def stream_video():
     # 0 is right, 1 is left
     cap_1 = cv2.VideoCapture(gstreamer_pipeline_1(flip_method=2), cv2.CAP_GSTREAMER)
-    vid_pub_1 = rospy.Publisher("/vid_1", Image, queue_size=1)
+    vid_pub_1 = rospy.Publisher("/stereo/left/image_raw", Image, queue_size=20)
+    info_pub = rospy.Publisher("/stereo/left/camera_info", CameraInfo, queue_size=20)
+    info_msg = load_camera_yaml('/home/uwfsae/driverless_ws/src/perception/camera_calibration_parameters/left.yaml')
 
     rate = rospy.Rate(30)
     bridge = CvBridge()
@@ -49,7 +67,20 @@ def stream_video():
 
                 if ret1:
                     img1 = bridge.cv2_to_imgmsg(frame1, 'passthrough')
+
+                    # Stamps must match to be synchronized
+                    stamp = rospy.Time.now()
+                    img1.header.stamp = stamp
+                    img1.header.frame_id="left_camera"
+                    info_msg.header.stamp = stamp
+                    info_msg.header.frame_id="left_camera"
+
+                    img1.encoding="bgr8"
+                    img1.width = 1280
+                    img1.height = 720
                     vid_pub_1.publish(img1)
+                    info_pub.publish(info_msg)  
+
             except KeyboardInterrupt:
                 break
             rate.sleep()
@@ -60,5 +91,5 @@ def stream_video():
 
 
 if __name__ == '__main__':
-    rospy.init_node('camera', anonymous=True) 
+    rospy.init_node('camera_left', anonymous=True) 
     stream_video()

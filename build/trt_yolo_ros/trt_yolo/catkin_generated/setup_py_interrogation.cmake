@@ -1,0 +1,7 @@
+set(trt_yolo_SETUP_PY_SETUP_MODULE "distutils.core")
+set(trt_yolo_SETUP_PY_VERSION "0.0.1")
+set(trt_yolo_SETUP_PY_SCRIPTS "")
+set(trt_yolo_SETUP_PY_PACKAGES "trt_yolo")
+set(trt_yolo_SETUP_PY_PACKAGE_DIRS "src/trt_yolo")
+set(trt_yolo_SETUP_PY_MODULES "")
+set(trt_yolo_SETUP_PY_MODULE_DIRS "")

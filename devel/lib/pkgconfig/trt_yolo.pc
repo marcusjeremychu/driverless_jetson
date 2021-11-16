@@ -1,0 +1,8 @@
+prefix=/home/uwfsae/driverless_ws/devel
+
+Name: trt_yolo
+Description: Description of trt_yolo
+Version: 0.0.1
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

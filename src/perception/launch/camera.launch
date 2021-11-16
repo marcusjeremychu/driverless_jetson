@@ -1,8 +1,12 @@
 <launch>
     <node name="camera_left" pkg="perception" type="camera_left.py" output="screen"/>
     <node name="camera_right" pkg="perception" type="camera_right.py" output="screen"/>
+    <!-- <node name="disparity_sub" pkg="perception" type="disparity_sub.py" output="screen"/> -->
     <!-- <node name="pipeline" pkg="perception" type="pipeline.py" output="screen"/> -->
     <node name="camera_imu" pkg="perception" type="camera_imu_i2c" output="screen"/>
-    <node name="camera_imu_broadcaster" pkg="perception" type="tf2_broadcaster.py" output="screen"/>
-    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_camera_broadcaster" args="0 0 0 0 0 0 1 map camera_imu"/>
+    <node name="camera_broadcaster" pkg="perception" type="tf2_broadcaster.py" output="screen"/>
+    <!-- <node pkg='stereo_image_proc' ns='stereo' type='stereo_image_proc' name='stereo_image_proc'/>
+        <param name="approximate_sync" value="true"/>
+        <param name="queue_size" value="5"/> -->
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_camera_broadcaster" args="0 0 0 0 0 0 1 map left_camera"/> -->
 </launch>
