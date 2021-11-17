@@ -1,0 +1,11 @@
+bool MANUAL_MISSION
+bool AUTONOMOUS_MISSION
+bool ASMS
+bool GO
+bool BRAKE_RELEASE
+bool EBS_activate
+bool MISSION_FINISHED
+bool V0
+bool TRACTIVE_SYSTEM
+bool R2D
+bool ASB_check
