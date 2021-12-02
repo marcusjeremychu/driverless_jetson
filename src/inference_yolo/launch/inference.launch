@@ -1,0 +1,3 @@
+<launch>
+    <node name="inference" pkg="inference_yolo" type="detect.py" output="screen"/>
+</launch>

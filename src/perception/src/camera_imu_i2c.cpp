@@ -62,20 +62,15 @@ int main(int argc, char* argv[])
 		// Build IMU Msg
 		imu_msg.header.stamp = ros::Time::now();
 		imu_msg.header.frame_id = "left_camera";
-		// imu_msg.orientation.x = myQuaternion.x();
-		// imu_msg.orientation.y = myQuaternion.y();
-		// imu_msg.orientation.z = myQuaternion.z();
-		// imu_msg.orientation.w = myQuaternion.w();
-		// imu_msg.orientation_covariance[0] = -1;
 
-		imu_msg.linear_acceleration.x = stAccelRawData.fZ * 9.81;
-		imu_msg.linear_acceleration.y = stAccelRawData.fX * 9.81;
-		imu_msg.linear_acceleration.z = stAccelRawData.fY * 9.81;
+		imu_msg.linear_acceleration.x = stAccelRawData.fZ * 9.81; // - 0.23
+		imu_msg.linear_acceleration.y = -stAccelRawData.fX * 9.81;
+		imu_msg.linear_acceleration.z = -stAccelRawData.fY * 9.81;
 		imu_msg.linear_acceleration_covariance[0] = -1;
 
 		imu_msg.angular_velocity.x = stGyroRawData.fZ * PI/180;
-		imu_msg.angular_velocity.y = stGyroRawData.fX * PI/180;
-		imu_msg.angular_velocity.z = stGyroRawData.fY * PI/180; 
+		imu_msg.angular_velocity.y = -stGyroRawData.fX * PI/180;
+		imu_msg.angular_velocity.z = -stGyroRawData.fY * PI/180; 
 		imu_msg.angular_velocity_covariance[0] = -1;
 		
 
@@ -83,8 +78,8 @@ int main(int argc, char* argv[])
 		mag_msg.header.stamp = ros::Time::now();
 		mag_msg.header.frame_id = "left_camera";
 
-		mag_msg.magnetic_field.x = stMagnRawData.fZ /1000000.0;
-		mag_msg.magnetic_field.y = stMagnRawData.fX /1000000.0;
+		mag_msg.magnetic_field.x =  stMagnRawData.fZ /1000000.0;
+		mag_msg.magnetic_field.y =  stMagnRawData.fX /1000000.0;
 		mag_msg.magnetic_field.z = stMagnRawData.fY /1000000.0;
 		mag_msg.magnetic_field_covariance[0] = -1;
 

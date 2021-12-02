@@ -492,6 +492,18 @@ gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 //The directory containing a CMake configuration file for image_transport.
 image_transport_DIR:PATH=/opt/ros/melodic/share/image_transport/cmake
 
+//Value Computed by CMake
+inference_BINARY_DIR:STATIC=/home/uwfsae/driverless_ws/build/inference/src
+
+//Value Computed by CMake
+inference_SOURCE_DIR:STATIC=/home/uwfsae/driverless_ws/src/inference/src
+
+//Value Computed by CMake
+inference_yolo_BINARY_DIR:STATIC=/home/uwfsae/driverless_ws/build/inference_yolo
+
+//Value Computed by CMake
+inference_yolo_SOURCE_DIR:STATIC=/home/uwfsae/driverless_ws/src/inference_yolo
+
 //The directory containing a CMake configuration file for jetson-inference.
 jetson-inference_DIR:PATH=/usr/local/share/jetson-inference/cmake
 
@@ -563,6 +575,9 @@ slam_SOURCE_DIR:STATIC=/home/uwfsae/driverless_ws/src/slam
 
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/melodic/share/std_msgs/cmake
+
+//The directory containing a CMake configuration file for stdmsg.
+stdmsg_DIR:PATH=stdmsg_DIR-NOTFOUND
 
 //Value Computed by CMake
 trt_yolo_BINARY_DIR:STATIC=/home/uwfsae/driverless_ws/build/trt_yolo_ros/trt_yolo
@@ -692,7 +707,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=7
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

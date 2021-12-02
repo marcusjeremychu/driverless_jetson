@@ -1,0 +1,8 @@
+prefix=/home/uwfsae/driverless_ws/install
+
+Name: inference_yolo
+Description: Description of inference_yolo
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

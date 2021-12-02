@@ -1,2 +1,2 @@
-perception:slam
+inference_yolo:perception:slam
 -DCATKIN_DEVEL_PREFIX=/home/uwfsae/driverless_ws/devel -DCMAKE_INSTALL_PREFIX=/home/uwfsae/driverless_ws/install -G Unix Makefiles

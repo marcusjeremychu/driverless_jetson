@@ -4,7 +4,7 @@
     <!-- <node name="disparity_sub" pkg="perception" type="disparity_sub.py" output="screen"/> -->
     <!-- <node name="pipeline" pkg="perception" type="pipeline.py" output="screen"/> -->
     <node name="camera_imu" pkg="perception" type="camera_imu_i2c" output="screen"/>
-    <node name="camera_broadcaster" pkg="perception" type="tf2_broadcaster.py" output="screen"/>
+    <!-- <node name="camera_broadcaster" pkg="perception" type="tf2_broadcaster.py" output="screen"/> -->
     <!-- <node pkg='stereo_image_proc' ns='stereo' type='stereo_image_proc' name='stereo_image_proc'/>
         <param name="approximate_sync" value="true"/>
         <param name="queue_size" value="5"/> -->

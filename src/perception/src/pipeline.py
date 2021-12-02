@@ -10,18 +10,30 @@ from yolo.models import Darknet
 from yolo.utils.utils import calculate_padding
 from yolo.utils.nms import nms
 
-from rektnet.keypoint_net import KeypointNet
+# from rektnet.keypoint_net import KeypointNet
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 from params import *
 
 import rospy
 from sensor_msgs.msg import Image 
-from std_msgs.msg import String
+from geometry_msgs.msg import PoseArray, Pose
 import numpy as np
+from numpy.linalg import inv
 import cv2
 from cv_bridge import CvBridge
 
-cone_pub = rospy.Publisher("/cone_list", String, queue_size=1)
+
+PUB_BOUNDING_BOX_IMAGES = False
+cone_pub = rospy.Publisher("/cone_poses_camera", PoseArray, queue_size=1)
+if PUB_BOUNDING_BOX_IMAGES:
+    bounding_box_pub = rospy.Publisher("/bounding_box_image", Image, queue_size=1)
+
+camera_matrix = np.array([[1153.800791, 0.000000, 612.963545],
+                 [0.000000, 1152.845387, 355.852706],
+                 [0.000000, 0.000000, 1.000000]])
+upright_quaternion = [0, 0.70707272, 0, 0.70714084]
+curr_rot_matrix = None
 
 # Preprocess an input image.
 def preprocess_image(image: PIL.Image.Image) -> torch.Tensor:
@@ -111,44 +123,115 @@ def get_subimages(image: PIL.Image.Image) -> list:
         # To obtain a slightly larger bounding box, we need to:
         x0, y0 = math.floor(x0), math.floor(y0)
         x1, y1 = math.ceil(x1), math.ceil(y1)
-        subimages.append([image.crop((x0, y0, x1, y1)), x0, y0, x1, y1])
+        # subimages.append([image.crop((x0, y0, x1, y1)), x0, y0, x1, y1])
+        subimages.append([x0, y0, x1, y1])
     #     draw.rectangle([(x0, y0), (x1, y1)], outline="red")  # very nice result!
     # image.show()
     return subimages
 
+# Taken from https://automaticaddison.com/how-to-convert-a-quaternion-to-a-rotation-matrix/
+def quaternion_rotation_matrix(Q):
+    """
+    Covert a quaternion into a full three-dimensional rotation matrix.
+ 
+    Input
+    :param Q: A 4 element array representing the quaternion (q0,q1,q2,q3) 
+ 
+    Output
+    :return: A 3x3 element matrix representing the full 3D rotation matrix. 
+             This rotation matrix converts a point in the local reference 
+             frame to a point in the global reference frame.
+    """
+    # Extract the values from Q
+    q0 = Q[0]
+    q1 = Q[1]
+    q2 = Q[2]
+    q3 = Q[3]
+     
+    # First row of the rotation matrix
+    r00 = 2 * (q0 * q0 + q1 * q1) - 1
+    r01 = 2 * (q1 * q2 - q0 * q3)
+    r02 = 2 * (q1 * q3 + q0 * q2)
+     
+    # Second row of the rotation matrix
+    r10 = 2 * (q1 * q2 + q0 * q3)
+    r11 = 2 * (q0 * q0 + q2 * q2) - 1
+    r12 = 2 * (q2 * q3 - q0 * q1)
+     
+    # Third row of the rotation matrix
+    r20 = 2 * (q1 * q3 - q0 * q2)
+    r21 = 2 * (q2 * q3 + q0 * q1)
+    r22 = 2 * (q0 * q0 + q3 * q3) - 1
+     
+    # 3x3 rotation matrix
+    rot_matrix = np.array([[r00, r01, r02],
+                           [r10, r11, r12],
+                           [r20, r21, r22]])
+                            
+    return rot_matrix
+
+# Callback function for receiving an image to run image through model to predict bounding boxes
 def callback(frame):
-    global cone_pub
+    global cone_pub, bounding_box_pub, camera_matrix, upright_quaternion, curr_pose
 
     # Step 1: Go through YOLO.
     image_data = np.frombuffer(frame.data, dtype=np.uint8).reshape(frame.height, frame.width, -1)
     pil_image = PIL.Image.fromarray(cv2.cvtColor(image_data, cv2.COLOR_BGR2RGB))
     cones = get_subimages(pil_image)
-    cone_pub.publish(str(cones))
 
-    print()
-    if len(cones) > 0:
-        # Step 2: Go through RektNet.
-        # print("{} cones detected.".format(len(cones)))
-        # px_per_mm = 1280/(3296/443)
-        # print("Pixel per mm", px_per_mm)
-        for id, cone in enumerate(cones):
-            x0, y0, x1, y1 = cone[1:]
-            h_pixel = y1- y0
-            # estimated_distance = (325 * 2.6) / (h_pixel/px_per_mm)
-            estimated_distance = round(((2.6 * 325 * frame.height)/(h_pixel * 2.76)) / 1000, 4)
-            
-            print("{} is roughly {}m away. Pixel height: {}".format(id, estimated_distance, h_pixel))
-        # keypoints = get_keypoints(keypoint_model, cones)
-
-        # # ad-hoc visualizer :)
-        # for idx, cone in enumerate(cones[0:5]):
-        #     draw = PIL.ImageDraw.Draw(cone)
-        #     for i in range(7):
-        #         draw.point((cone.size[0]*keypoints[idx][i][0], cone.size[1]*keypoints[idx][i][1]), fill=255)
-        #     cone.show()
-    else:
-        print("...")
+    cone_poses = PoseArray()
+    cone_poses.poses = []
     
+    if len(cones) > 0:
+        print("{} cones detected.".format(len(cones)))
+        for id, cone in enumerate(cones):
+            x0, y0, x1, y1 = cone
+        
+            # estimate depth to cone
+            #  scaling factor * (focal length * real cone height * image height)/(pixel_height * sensor height)
+            h_pixel = y1- y0
+            scaling_factor = 2464 / frame.height
+            z_camera = (scaling_factor * (2.6 * 325 * frame.height)/(h_pixel * 4.93)) / 1000 # depth
+            y_camera = (y1 - frame.height/2) * z_camera/1153
+            x_camera = (x1 - frame.width/2) * z_camera/1153
+            inv_rot_matrix = inv(curr_rot_matrix)
+            # cone_pos_camera_frame = np.matmul(inv_rot_matrix,np.array([[x_world], [y_world],  [z_world]]))
+            
+            # Compose cone pose and add to array
+            cone_pose = Pose()
+            cone_pose.position.x = z_camera #cone_pos_camera_frame[0]
+            cone_pose.position.y = x_camera #cone_pos_camera_frame[1]
+            cone_pose.position.z = y_camera #cone_pos_camera_frame[2]
+            cone_pose.orientation.x = 0 #upright_quaternion[0]
+            cone_pose.orientation.y = 0 #upright_quaternion[1]
+            cone_pose.orientation.z = 0 #upright_quaternion[2]
+            cone_pose.orientation.w = 1 #upright_quaternion[3]
+            cone_poses.poses.append(cone_pose)
+            
+            # label bounding box
+            if PUB_BOUNDING_BOX_IMAGES:
+                cv2.rectangle(image_data, (x0,y0), (x1, y1), (0,0, 255), 2)
+                # label = "{}: ({}, {}, {})".format(id, x_world, y_world, z_world)
+                cv2.putText(image_data, id, (x0, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0,0,255), 2, 2)
+        # keypoints = get_keypoints(keypoint_model, cones)
+    else:
+        print("No cones detected")
+    
+    cone_poses.header.stamp = rospy.Time.now()
+    cone_poses.header.frame_id="left_camera"
+    cone_pub.publish(cone_poses)
+
+    if PUB_BOUNDING_BOX_IMAGES:
+        bridge = CvBridge()
+        bounding_box_pub.publish(bridge.cv2_to_imgmsg(image_data, encoding="passthrough"))
+
+
+# Callback function to update the current rotation matrix global variable
+def pose_cb(msg):
+    global curr_rot_matrix
+    q = [msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, 
+         msg.pose.pose.orientation.z, msg.pose.pose.orientation.w]
+    curr_rot_matrix = quaternion_rotation_matrix(q)
 
 
 if __name__ == '__main__':
@@ -174,10 +257,11 @@ if __name__ == '__main__':
     yolo_model.load_weights(YOLO_WEIGHT_PATH, yolo_model.get_start_weight_dim())
     yolo_model.to(device, non_blocking=True)
 
-    keypoint_model = KeypointNet()
-    keypoint_model.load_state_dict(torch.load(REKTNET_WEIGHT_PATH).get('model'))
+    # keypoint_model = KeypointNet()
+    # keypoint_model.load_state_dict(torch.load(REKTNET_WEIGHT_PATH).get('model'))
 
     rospy.init_node('pipeline_listener', anonymous=True)
     rospy.Subscriber("/stereo/left/image_raw", Image, callback)
+    rospy.Subscriber("pose", PoseWithCovarianceStamped, pose_cb)
     rospy.spin()
     cv2.destroyAllWindows()

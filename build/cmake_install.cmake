@@ -131,6 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/uwfsae/driverless_ws/build/gtest/cmake_install.cmake")
+  include("/home/uwfsae/driverless_ws/build/inference_yolo/cmake_install.cmake")
   include("/home/uwfsae/driverless_ws/build/perception/cmake_install.cmake")
   include("/home/uwfsae/driverless_ws/build/slam/cmake_install.cmake")
 

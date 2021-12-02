@@ -1,4 +1,21 @@
 <launch>
-    <node name="imu_filter" pkg="imu_filter_madgwick" type="imu_filter_node" output="screen"/>
+    <!-- <node name="imu_filter" pkg="imu_filter_madgwick" type="imu_filter_node" output="screen">
+        <param name="gain" value="0.2" type="double"/>
+        <param name="zeta" value="0.00" type="double"/>
+        <param name="world_frame" value="enu" type="string"/>
+        <param name="use_mag" value="False" type="bool"/>
+        <param name="use_magnetic_field_msg" value="True" type="bool"/>
+        <param name="mag_bias_x" value="0.0" type="double"/>
+        <param name="mag_bias_y" value="0.0" type="double"/>
+        <param name="mag_bias_z" value="0.0" type="double"/>
+        <param name="stateless" value="False" type="bool"/>
+    </node> -->
+
+    <node name="imu_filter" pkg="imu_complementary_filter" type="complementary_filter_node" output="screen">
+        <param name="gain_acc" value="0.01" type="double"/>
+        <param name="gain_mag" value="0.01" type="double"/>
+        <param name="use_mag" value="False" type="bool"/>
+    </node>
+
     <node name="pose_node" pkg="slam" type="pose_pub.py" output="screen"/>
 </launch>

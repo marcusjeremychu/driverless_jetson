@@ -80,17 +80,6 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target test
 test:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
@@ -122,6 +111,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # Special rule for the target install
 install: preinstall
@@ -168,186 +168,6 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-perception/CMakeFiles/roscpp_generate_messages_py.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/roscpp_generate_messages_py.dir/rule
-.PHONY : perception/CMakeFiles/roscpp_generate_messages_py.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_py: perception/CMakeFiles/roscpp_generate_messages_py.dir/rule
-
-.PHONY : roscpp_generate_messages_py
-
-# fast build rule for target.
-roscpp_generate_messages_py/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/roscpp_generate_messages_py.dir/build.make perception/CMakeFiles/roscpp_generate_messages_py.dir/build
-.PHONY : roscpp_generate_messages_py/fast
-
-# Convenience name for target.
-perception/CMakeFiles/roscpp_generate_messages_eus.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-.PHONY : perception/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_eus: perception/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-
-.PHONY : roscpp_generate_messages_eus
-
-# fast build rule for target.
-roscpp_generate_messages_eus/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/roscpp_generate_messages_eus.dir/build.make perception/CMakeFiles/roscpp_generate_messages_eus.dir/build
-.PHONY : roscpp_generate_messages_eus/fast
-
-# Convenience name for target.
-perception/CMakeFiles/roscpp_generate_messages_lisp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-.PHONY : perception/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_lisp: perception/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-
-.PHONY : roscpp_generate_messages_lisp
-
-# fast build rule for target.
-roscpp_generate_messages_lisp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make perception/CMakeFiles/roscpp_generate_messages_lisp.dir/build
-.PHONY : roscpp_generate_messages_lisp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-.PHONY : perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_cpp: perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_cpp
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_cpp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make perception/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
-.PHONY : rosgraph_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
-.PHONY : perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_lisp: perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
-
-.PHONY : std_msgs_generate_messages_lisp
-
-# fast build rule for target.
-std_msgs_generate_messages_lisp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make perception/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
-.PHONY : std_msgs_generate_messages_lisp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/roscpp_generate_messages_cpp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-.PHONY : perception/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_cpp: perception/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-
-.PHONY : roscpp_generate_messages_cpp
-
-# fast build rule for target.
-roscpp_generate_messages_cpp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make perception/CMakeFiles/roscpp_generate_messages_cpp.dir/build
-.PHONY : roscpp_generate_messages_cpp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/rule
-.PHONY : perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_eus: perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_eus
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_eus/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build.make perception/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build
-.PHONY : rosgraph_msgs_generate_messages_eus/fast
-
-# Convenience name for target.
-perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
-.PHONY : perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_lisp: perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_lisp
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_lisp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make perception/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
-.PHONY : rosgraph_msgs_generate_messages_lisp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-.PHONY : perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_cpp: perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : std_msgs_generate_messages_cpp
-
-# fast build rule for target.
-std_msgs_generate_messages_cpp/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make perception/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
-.PHONY : std_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
-perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule
-.PHONY : perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_nodejs: perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_nodejs/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build.make perception/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build
-.PHONY : rosgraph_msgs_generate_messages_nodejs/fast
-
-# Convenience name for target.
-perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
-.PHONY : perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_py: perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_py
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_py/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make perception/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
-.PHONY : rosgraph_msgs_generate_messages_py/fast
-
-# Convenience name for target.
-perception/CMakeFiles/std_msgs_generate_messages_eus.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/std_msgs_generate_messages_eus.dir/rule
-.PHONY : perception/CMakeFiles/std_msgs_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_eus: perception/CMakeFiles/std_msgs_generate_messages_eus.dir/rule
-
-.PHONY : std_msgs_generate_messages_eus
-
-# fast build rule for target.
-std_msgs_generate_messages_eus/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/std_msgs_generate_messages_eus.dir/build.make perception/CMakeFiles/std_msgs_generate_messages_eus.dir/build
-.PHONY : std_msgs_generate_messages_eus/fast
-
-# Convenience name for target.
 perception/CMakeFiles/camera_imu_i2c.dir/rule:
 	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/camera_imu_i2c.dir/rule
 .PHONY : perception/CMakeFiles/camera_imu_i2c.dir/rule
@@ -361,51 +181,6 @@ camera_imu_i2c: perception/CMakeFiles/camera_imu_i2c.dir/rule
 camera_imu_i2c/fast:
 	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/camera_imu_i2c.dir/build.make perception/CMakeFiles/camera_imu_i2c.dir/build
 .PHONY : camera_imu_i2c/fast
-
-# Convenience name for target.
-perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-.PHONY : perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_nodejs: perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-
-.PHONY : std_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-std_msgs_generate_messages_nodejs/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build.make perception/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build
-.PHONY : std_msgs_generate_messages_nodejs/fast
-
-# Convenience name for target.
-perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-.PHONY : perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_nodejs: perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-
-.PHONY : roscpp_generate_messages_nodejs
-
-# fast build rule for target.
-roscpp_generate_messages_nodejs/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/build.make perception/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
-.PHONY : roscpp_generate_messages_nodejs/fast
-
-# Convenience name for target.
-perception/CMakeFiles/std_msgs_generate_messages_py.dir/rule:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f CMakeFiles/Makefile2 perception/CMakeFiles/std_msgs_generate_messages_py.dir/rule
-.PHONY : perception/CMakeFiles/std_msgs_generate_messages_py.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_py: perception/CMakeFiles/std_msgs_generate_messages_py.dir/rule
-
-.PHONY : std_msgs_generate_messages_py
-
-# fast build rule for target.
-std_msgs_generate_messages_py/fast:
-	cd /home/uwfsae/driverless_ws/build && $(MAKE) -f perception/CMakeFiles/std_msgs_generate_messages_py.dir/build.make perception/CMakeFiles/std_msgs_generate_messages_py.dir/build
-.PHONY : std_msgs_generate_messages_py/fast
 
 src/ICM20948.o: src/ICM20948.cpp.o
 
@@ -496,27 +271,12 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... install/local"
-	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... list_install_components"
-	@echo "... roscpp_generate_messages_py"
-	@echo "... roscpp_generate_messages_eus"
 	@echo "... edit_cache"
-	@echo "... roscpp_generate_messages_lisp"
-	@echo "... rosgraph_msgs_generate_messages_cpp"
-	@echo "... std_msgs_generate_messages_lisp"
-	@echo "... roscpp_generate_messages_cpp"
-	@echo "... install"
-	@echo "... rosgraph_msgs_generate_messages_eus"
-	@echo "... rosgraph_msgs_generate_messages_lisp"
-	@echo "... std_msgs_generate_messages_cpp"
-	@echo "... rosgraph_msgs_generate_messages_nodejs"
-	@echo "... rosgraph_msgs_generate_messages_py"
-	@echo "... std_msgs_generate_messages_eus"
 	@echo "... camera_imu_i2c"
-	@echo "... std_msgs_generate_messages_nodejs"
-	@echo "... roscpp_generate_messages_nodejs"
-	@echo "... std_msgs_generate_messages_py"
+	@echo "... rebuild_cache"
+	@echo "... install"
 	@echo "... src/ICM20948.o"
 	@echo "... src/ICM20948.i"
 	@echo "... src/ICM20948.s"
