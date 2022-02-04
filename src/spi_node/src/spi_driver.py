@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-#import spidev
+#!/usr/bin/env python3
+import spidev
 import rospy
 import struct
 from std_msgs.msg import Int8
@@ -19,26 +19,25 @@ testing = True
 # float32 steering_angle_velocity # desired rate of change (radians/s)
 
 def callback(data):
+    global spi
     # int8 for single dataframe, in order to have more,
     # need to use an array e.g. data=[0x00,0x01,0x02]
     s_a = list(struct.pack("f", data.steering_angle))
     
-    if (testing):
-        #rospy.loginfo(hello_str)
-        print("steering angle", data.steering_angle)
-        print("spi data array", s_a)
-    else:
-        spi.xfer(s_a)
+    print("steering angle", data.steering_angle)
+    print("spi data array", s_a)
+    spi.xfer(s_a)
 
 def run_SPI():
+    global spi
     rospy.init_node('spi_connector', anonymous=True)
     rate = rospy.Rate(30) # 30hz
     rospy.Subscriber("steering", AckermannDrive, callback)
 
-    #spi = spidev.SpiDev()
-    #spi.open(0, 0)
-    #spi.max_speed_hz = 5000
-    #spi.mode = 0b00
+    spi = spidev.SpiDev()
+    spi.open(0, 0)
+    spi.max_speed_hz = 5000
+    spi.mode = 0b00
 
     while not rospy.is_shutdown():
         rate.sleep()

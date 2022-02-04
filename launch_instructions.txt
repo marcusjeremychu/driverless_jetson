@@ -1,0 +1,2 @@
+roslaunch perception camera.launch
+roslaunch inference_yolo inference.launch

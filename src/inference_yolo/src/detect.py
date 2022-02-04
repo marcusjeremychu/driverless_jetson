@@ -46,11 +46,16 @@ from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 from utils.augmentations import letterbox
 
+curr_image = None
 
+# # 2D for simplicity
+# def translate_pose_to_rotation_and_translation(pose):
+#     translation_matrix = np.array([pose.position.x, pose.position.y, pose.position.z])
+#     rotation_matrix = np.cos()
 
 class Inference():
     def __init__(self):
-        self.weights='/home/uwfsae/driverless_ws/src/inference_yolo/src/best_yolov3tiny.pt'  # model.pt path(s)
+        self.weights='/home/uwfsae/driverless_ws/src/inference_yolo/src/best_300epoch_alldata.pt'  # model.pt path(s)
         self.imgsz=640  # inference size (pixels)
         self.conf_thres=0.25  # confidence threshold
         self.iou_thres=0.45  # NMS IOU threshold
@@ -102,9 +107,6 @@ class Inference():
         im /= 255  # 0 - 255 to 0.0 - 1.0
         if len(im.shape) == 3:
             im = im[None]  # expand for batch dim
-        
-        # im = F.pad(im, (8,8)) # image resolution must be divisble by 32, so 720 is zero padded to 736
-        # im = im.permute(2,1,0)
 
         # Inference
         pred = self.model(im, augment=self.augment, visualize=False)
@@ -118,7 +120,6 @@ class Inference():
 
         image_draw = im0.copy()
         for i, det in enumerate(pred):  # per image
-            gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 
             if len(det):
                 # Rescale boxes from img_size to im0 size
@@ -126,15 +127,17 @@ class Inference():
 
                 for detection in det:
                     x0, y0, x1, y1, prob, cone_class = detection
+                    center = (int((x1-x0)/2 + x0), int((y1-y0)/2 + y0))
                     # estimate depth to cone
                     # scaling factor * (focal length * real cone height * image height)/(pixel_height * sensor height)
-                    h_pixel = y1 - y0
+                    h_pixel = int(y1) - int(y0)
                     if h_pixel <= 0:
                         continue
                     scaling_factor = 2464 / height
                     z_camera = (scaling_factor * (2.6 * 325 * height)/(h_pixel * 4.93)) / 1000 # depth
-                    y_camera = (y1 - height/2) * z_camera/1153
-                    x_camera = (x1 - width/2) * z_camera/1153
+                    y_camera = (center[1] - height/2) * z_camera/1153
+                    x_camera = (center[0] - width/2) * z_camera/1153
+
                     
                     # Compose cone pose and add to array
                     cone_pose = Pose()
@@ -149,26 +152,34 @@ class Inference():
 
                     if SHOW:
                         cv2.rectangle(image_draw, (int(x0), int(y0)), (int(x1), int(y1)), (0,255,0), 2)
-                        text = self.names[int(cone_class)] + ": " + str(round(float(prob), 2))
+                        text = self.names[int(cone_class)] + ": " + str(round(float(prob), 2)) + ", d=" + str(round(float(z_camera), 2))
                         cv2.putText(image_draw, text, (int(x0) ,int(y0 - 8)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
                     
         cone_poses.header.stamp = rospy.Time.now()
-        cone_poses.header.frame_id="left_camera"
+        cone_poses.header.frame_id="base_link"
         self.cone_pub.publish(cone_poses)
 
         if SHOW:
             bridge = CvBridge()
             self.bounding_box_pub.publish(bridge.cv2_to_imgmsg(image_draw, encoding="passthrough"))
 
-inference = Inference()
+def update_img(msg):
+    global curr_image
+    curr_image = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
 
-def infer_cb(msg):
-    image_data = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
-    inference.infer(image_data)
+def update_curr_pose(msg):
+    global curr_pose
+    curr_pose = msg
 
 if __name__ == '__main__':
     rospy.init_node('pipeline_listener', anonymous=True)
-    rospy.Subscriber("/stereo/left/image_raw", Image, infer_cb)
-    # rospy.Subscriber("pose", PoseWithCovarianceStamped, pose_cb)
-    rospy.spin()
-    cv2.destroyAllWindows()
+    rospy.Subscriber("/stereo/left/image_raw", Image, update_img)
+    rospy.Subscriber('/slam_out_pose', Pose, update_curr_pose)
+    
+    rate = rospy.Rate(20) # 20Hz
+    inference = Inference()
+    
+    while not rospy.is_shutdown():
+        inference.infer(curr_image)
+        rate.sleep()
+

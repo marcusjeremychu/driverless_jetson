@@ -45,7 +45,7 @@ def stream_video():
     info_pub = rospy.Publisher("/stereo/right/camera_info", CameraInfo, queue_size=1)
     info_msg = camera_left.load_camera_yaml('/home/uwfsae/driverless_ws/src/perception/camera_calibration_parameters/right.yaml')
 
-    rate = rospy.Rate(30)
+    rate = rospy.Rate(20)
     bridge = CvBridge()
     
     if cap_0.isOpened():

@@ -6,7 +6,7 @@ from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
 import yaml
 
-IMAGE_WIDTH = 1280
+IMAGE_WIDTH = 1280  
 IMAGE_HEIGHT = 720
 FRAMERATE = 59.999999
 
@@ -60,7 +60,7 @@ def stream_video():
     info_pub = rospy.Publisher("/stereo/left/camera_info", CameraInfo, queue_size=1)
     info_msg = load_camera_yaml('/home/uwfsae/driverless_ws/src/perception/camera_calibration_parameters/left.yaml')
 
-    rate = rospy.Rate(30)
+    rate = rospy.Rate(20)
     bridge = CvBridge()
     
     if cap_1.isOpened():
