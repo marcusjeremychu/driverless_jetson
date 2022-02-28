@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+# DEPRECATED - This code is outdated!
 import torch
 import torch.nn as nn
 import torchvision
